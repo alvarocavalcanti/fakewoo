@@ -81,7 +81,7 @@ function run_source_file_interceptor() {
 }
 run_source_file_interceptor();
 
-function inject_source_ctx($parsed_args, $url) {
+function inject_source_ctx($response, $parsed_args, $url) {
 	if (str_starts_with($url, $_ENV['ELASTICSEARCH_URL'])) {
 		return $parsed_args;
 	}
@@ -112,7 +112,10 @@ function inject_source_ctx($parsed_args, $url) {
 			preg_match("/(?P<asset_type>(mu\-)?plugins|themes)\/(?P<name>[^\/]+)/", $srcFile, $matches);
 			$assetType = $matches['asset_type'];
 			$assetName = $matches['name'];
-
+			$response_headers = wp_remote_retrieve_headers($response);
+			if ($response_headers) {
+				$response_headers = $response_headers->getAll();
+			}
 			$dt = new DateTime();
 			$iso8601 = $dt->format(DateTime::ATOM);
 			$parsedURL = parse_url($url);
@@ -130,8 +133,10 @@ function inject_source_ctx($parsed_args, $url) {
 				'asset_type' => $assetType,
 				'asset_name' => $assetName,
 				'timestamp' => $iso8601,
+				'response_body' => wp_remote_retrieve_body($response),
+				'response_code' => wp_remote_retrieve_response_code($response),
+				'response_headers' => $response_headers,
 			);
-
 			error_log("Detected call to {$func} in file {$srcFile}, line {$srcLine}");
 
 			$res = wp_remote_post(
@@ -151,7 +156,7 @@ function inject_source_ctx($parsed_args, $url) {
 
 
 
-	return $parsed_args;
+	return $response;
 }
 
-add_filter('http_request_args', 'inject_source_ctx', 999, 3);
+add_filter('http_response', 'inject_source_ctx', 999, 3);

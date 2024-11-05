@@ -15,11 +15,15 @@ function DebugInfo() {
   }, []);
 
   return (
-    <div className="p-4 border border-gray-300 rounded-lg shadow-lg bg-white">
-      <h1 className="text-2xl font-bold mb-4">Debug Info</h1>
-      <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
-        {JSON.stringify(debugInfo, null, 2)}
-      </pre>
+    <div className="border border-gray-300 rounded-lg shadow-lg bg-white">
+      <div className="bg-[#d5e6f8] p-4 rounded-t-lg">
+        <h1 className="text-2xl font-bold text-gray-800">Debug Info</h1>
+      </div>
+      <div className="p-4">
+        <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
+          {JSON.stringify(debugInfo, null, 2)}
+        </pre>
+      </div>
     </div>
   );
 }

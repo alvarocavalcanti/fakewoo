@@ -23,8 +23,13 @@ const debounce = (func: (...args: any[]) => void, wait: number) => {
 
 function PluginSearch() {
   const [input, setInput] = useState<string>("");
+  const [loading, setLoading] = useState(null);
   const [searchResults, setSearchResults] = useState<Plugin[]>([]);
-
+  const handleInstall = async (slug) => {
+    setLoading(slug);
+    await installPlugin(slug);
+    setLoading(null);
+  };
   const debouncedSearch = useCallback(
     debounce(async (input: string) => {
       if (input.length <= 3) {
@@ -65,31 +70,43 @@ function PluginSearch() {
   }, [input, debouncedSearch]);
 
   return (
-    <div>
-      <h1  className="text-2xl font-bold mb-4">Plugin Search</h1>
-      <input        className="w-full p-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
- placeholder="Search for a plugin" onChange={onChangeInput} />
-      <div>
-        {searchResults.length > 0 && <h2>Found Plugins:</h2>}
-        {searchResults?.map((plugin, index) => (
-          <div
-            key={index}
-            className="p-4 mb-4 border border-gray-300 rounded shadow-sm space-y-2"
-          >
-            <h2>{plugin.name}</h2>
-            <h3>{plugin.author?.split(">")[1]?.split("<")[0]}</h3>
-            <h3>{plugin.version}</h3>
-            <a href={plugin.homepage} className="text-blue-500 hover:underline">
-              Homepage
-            </a>
-            <button
-              onClick={() => installPlugin(plugin.slug)}
-              className="ml-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
-            >
-              Install
-            </button>
-          </div>
-        ))}
+    <div className="border border-gray-300 rounded-lg shadow-lg bg-white max-h-[400px] overflow-y-auto">
+      <div className="bg-[#d5e6f8] p-4 rounded-t-lg sticky top-0 z-10">
+        <h1 className="text-2xl font-bold text-gray-800">Plugin Search</h1>
+      </div>
+      <div className="p-4">
+        <input
+          className="w-full p-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Search for a plugin"
+          onChange={onChangeInput}
+        />
+        <div>
+          {searchResults.length > 0 && (
+            <h2 className="text-lg font-semibold mb-2">Found Plugins:</h2>
+          )}
+          {searchResults?.map((plugin, index) => (
+            <div key={index} className="mb-4">
+              <h2 className="text-lg font-semibold">{plugin.name}</h2>
+              <p className="text-sm text-gray-600">Version: {plugin.version}</p>
+              <div className="flex items-center space-x-4 text-sm text-blue-500">
+                <a href={plugin.homepage} className="hover:underline">
+                  Homepage
+                </a>
+                <button
+                  onClick={() => handleInstall(plugin.slug)}
+                  disabled={loading === plugin.slug}
+                  className="relative bg-blue-500 text-white font-semibold py-1 px-3 rounded hover:bg-blue-700 transition duration-300 flex items-center justify-center"
+                >
+                  {loading === plugin.slug ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    "Install"
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

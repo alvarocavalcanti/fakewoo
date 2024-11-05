@@ -25,7 +25,7 @@ function PluginSearch() {
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState(null);
   const [searchResults, setSearchResults] = useState<Plugin[]>([]);
-  const handleInstall = async (slug) => {
+  const handleInstall = async (slug: any) => {
     setLoading(slug);
     await installPlugin(slug);
     setLoading(null);

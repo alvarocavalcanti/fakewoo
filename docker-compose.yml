@@ -55,7 +55,6 @@ services:
     ports:
       - "3000:4321"
     volumes:
-      - ./frontend_astro:/app
       - ./frontend_astro/logs:/app/logs
     depends_on:
       - wordpress

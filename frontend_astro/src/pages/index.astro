@@ -1,0 +1,39 @@
+---
+import { object } from 'astro:schema';
+import Layout from '../layouts/Layout.astro';
+import InstalledPlugins from '../components/InstalledPlugins.tsx';
+import PluginSearch from '../components/PluginSearch.tsx';
+import ContainerRunnings from '../components/ContainersRunnings.tsx';
+import WordpressStatus from '../components/WordpressStatus.tsx';
+import DebugInfo from '../components/DebugInfo.tsx';
+---
+
+<Layout title="Welcome to woocommerce dashboard">
+    <main class="m-auto p-4 w-[1000px] max-w-[calc(100%-2rem)] text-[20px] leading-[1.6] grid gap-4">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold leading-none mb-4">WordPress Plugin Analysis</h1>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="max-h-[400px] overflow-y-auto border border-gray-300 rounded-lg shadow-lg bg-white">
+                <div class="bg-[#d5e6f8] p-4 sticky top-0 rounded-t-lg z-10">
+                    <h1 class="text-2xl font-bold text-gray-800">Installed Plugins</h1>
+                </div>
+                <InstalledPlugins client:visible/>
+            </div>
+            <div class="max-h-[400px] overflow-y-auto border bg-white">
+                <ContainerRunnings client:visible/>
+            </div>
+        </div>
+        <div>                 <PluginSearch client:visible/>
+
+        </div>
+        <div>
+            <WordpressStatus client:visible/>
+        </div>
+        <div>
+            <DebugInfo client:visible/>
+        </div>
+    </main>
+</Layout>
+
+
